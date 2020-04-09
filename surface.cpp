@@ -10,9 +10,9 @@
 #include <pcl/io/pcd_io.h>
 #include <pcl/point_types.h>
 #include <pcl/features/normal_3d.h>
-//#include <pcl/features/normal_3d_omp.h>
 #include <pcl/surface/gp3.h>
 #include "surface.h"
+
 
 
 pcl::PolygonMesh greedy_triangulation(pcl::PointCloud<pcl::PointNormal>::Ptr cloud_with_normals)
@@ -47,5 +47,6 @@ pcl::PolygonMesh greedy_triangulation(pcl::PointCloud<pcl::PointNormal>::Ptr clo
     return triangles;
 
 }
+
 
 
