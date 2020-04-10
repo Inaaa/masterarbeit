@@ -8,17 +8,19 @@
 #include <pcl/visualization/cloud_viewer.h>
 #include "range_image.h"
 #include <pcl/io/vtk_io.h>
+#include "preprocessing.h"
 
 int main ()
 {
+    //preprocessing();
     pcl::PointCloud<pcl::PointXYZ>::Ptr cloud (new pcl::PointCloud<pcl::PointXYZ>);
     pcl::PointCloud<pcl::PointXYZ>::Ptr cloud_filtered (new pcl::PointCloud<pcl::PointXYZ>);
     pcl::PointCloud<pcl::PointXYZ>::Ptr cloud_filtered2 (new pcl::PointCloud<pcl::PointXYZ>);
     // load the cloud data
-    pcl::io::loadPCDFile ("/mrtstorage/users/chli/real_data/test_data2/road_new.pcd", *cloud);
+    pcl::io::loadPCDFile ("./data/0356_3_road_new.pcd", *cloud);
     radius_filter(cloud, cloud_filtered);
     pcl::PCDWriter writer;
-    writer.write<pcl::PointXYZ>("/mrtstorage/users/chli/real_data/test_data2/road_filter_new.pcd", *cloud_filtered, false);
+    //writer.write<pcl::PointXYZ>("./data/0356_3_road_filter_new.pcd", *cloud_filtered, false);
 
     /* //usual normal estimation
     pcl::PointCloud<pcl::Normal>::Ptr normals (new pcl::PointCloud<pcl::Normal>);
@@ -37,7 +39,7 @@ int main ()
     // greedy triangularation
     pcl::PolygonMesh::Ptr triangles(new pcl::PolygonMesh);
     greedy_triangulation(mls_points,triangles);
-    pcl::io::saveVTKFile ("/mrtstorage/users/chli/real_data/test_data2/road.vtk", *triangles);
+    pcl::io::saveVTKFile ("./data/0356_3_road.vtk", *triangles);
     //range_image2(cloud_filtered);
 
 
