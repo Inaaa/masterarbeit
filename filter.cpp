@@ -14,6 +14,8 @@
 #include <pcl/surface/mls.h>
 
 #include "filter.h"
+#include <pcl/filters/voxel_grid.h>
+#include <pcl/io/pcd_io.h>
 
 void radius_filter(pcl::PointCloud<pcl::PointXYZ>::Ptr cloud,
                    pcl::PointCloud<pcl::PointXYZ>::Ptr cloud_filtered)
@@ -29,9 +31,33 @@ void radius_filter(pcl::PointCloud<pcl::PointXYZ>::Ptr cloud,
 
 }
 
-void resampling(pcl::PointCloud<pcl::PointXYZ>::Ptr cloud,
-        pcl::PointCloud<pcl::PointNormal> mls_points)
+void voxel_grid (pcl::PointCloud<pcl::PointXYZ>::Ptr cloud,
+                 pcl::PointCloud<pcl::PointXYZ>::Ptr cloud_filtered)
 {
+
+    std::cerr << "PointCloud before filtering: " << cloud->width * cloud->height
+              << " data points (" << pcl::getFieldsList (*cloud) << ").";
+
+    // Create the filtering object
+    pcl::VoxelGrid<pcl::PointXYZ> sor;
+    sor.setInputCloud (cloud);
+    sor.setLeafSize (0.1f, 0.1f, 0.1f);
+    sor.filter (*cloud_filtered);
+
+    std::cerr << "PointCloud after filtering: " << cloud_filtered->width * cloud_filtered->height
+              << " data points (" << pcl::getFieldsList (*cloud_filtered) << ")."<< std::endl;
+
+    //pcl::PCDWriter writer;
+    //writer.write ("table_scene_lms400_downsampled.pcd", *cloud_filtered,
+    //              Eigen::Vector4f::Zero (), Eigen::Quaternionf::Identity (), false);
+
+}
+
+void resampling(pcl::PointCloud<pcl::PointXYZ>::Ptr cloud,
+        pcl::PointCloud<pcl::PointNormal>::Ptr mls_points)
+{
+    std::cerr << "PointCloud before filtering: " << cloud->width * cloud->height
+              << " data points (" << pcl::getFieldsList (*cloud) << ").";
     // Create a KD-Tree
     pcl::search::KdTree<pcl::PointXYZ>::Ptr tree (new pcl::search::KdTree<pcl::PointXYZ>);
 
@@ -46,8 +72,11 @@ void resampling(pcl::PointCloud<pcl::PointXYZ>::Ptr cloud,
     mls.setSearchRadius (0.3);
 
     // Reconstruct
-    mls.process (mls_points);
+    mls.process (*mls_points);
+    std::cerr << "PointCloud after filtering: " << mls_points->width * mls_points->height
+              << " data points (" << pcl::getFieldsList (*mls_points) << ")."<<std::endl;
 }
+
 
 void normal_estimation(pcl::PointCloud<pcl::PointXYZ>::Ptr cloud_filtered,
                        pcl::PointCloud<pcl::Normal>::Ptr normals)

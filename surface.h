@@ -14,6 +14,8 @@
 #ifndef MASTERARBEIT_SURFACE_H
 #define MASTERARBEIT_SURFACE_H
 
-pcl::PolygonMesh greedy_triangulation(pcl::PointCloud<pcl::PointNormal>::Ptr cloud_with_normals);
+void greedy_triangulation(pcl::PointCloud<pcl::PointNormal>::Ptr cloud_with_normals,
+        pcl::PolygonMesh::Ptr triangles);
+void marchingcubes (pcl::PointCloud<pcl::PointNormal>::Ptr cloud_with_normals);
 
 #endif //MASTERARBEIT_SURFACE_H
