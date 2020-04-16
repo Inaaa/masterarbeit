@@ -15,7 +15,9 @@
 
 #include "filter.h"
 #include <pcl/filters/voxel_grid.h>
+#include <pcl/filters/passthrough.h>
 #include <pcl/io/pcd_io.h>
+
 
 void radius_filter(pcl::PointCloud<pcl::PointXYZ>::Ptr cloud,
                    pcl::PointCloud<pcl::PointXYZ>::Ptr cloud_filtered)
@@ -31,6 +33,24 @@ void radius_filter(pcl::PointCloud<pcl::PointXYZ>::Ptr cloud,
 
 }
 
+void passthrough(pcl::PointCloud<pcl::PointXYZ>::Ptr cloud,
+        pcl::PointCloud<pcl::PointXYZ>::Ptr cloud_filtered)
+{
+    pcl::PassThrough<pcl::PointXYZ> pass;
+    pass.setInputCloud (cloud);
+    pass.setFilterFieldName ("z");
+    pass.setFilterLimits (-0.3, 0.3);
+    //pass.setFilterLimitsNegative (true);
+    pass.filter (*cloud_filtered);
+
+}
+
+
+
+
+
+
+
 void voxel_grid (pcl::PointCloud<pcl::PointXYZ>::Ptr cloud,
                  pcl::PointCloud<pcl::PointXYZ>::Ptr cloud_filtered)
 {
@@ -42,6 +62,7 @@ void voxel_grid (pcl::PointCloud<pcl::PointXYZ>::Ptr cloud,
     pcl::VoxelGrid<pcl::PointXYZ> sor;
     sor.setInputCloud (cloud);
     sor.setLeafSize (0.1f, 0.1f, 0.1f);
+    sor.getMinBoxCoordinates();
     sor.filter (*cloud_filtered);
 
     std::cerr << "PointCloud after filtering: " << cloud_filtered->width * cloud_filtered->height
@@ -137,6 +158,33 @@ void normal_estimation(pcl::PointCloud<pcl::PointXYZ>::Ptr cloud_filtered,
     // Output datasets
     ne.setRadiusSearch (0.3);
     ne.compute (*normals_large_scale);
+}
+
+void slope(pcl::PointCloud<pcl::PointXYZ>::Ptr cloud)
+{
+    pcl::PointCloud<pcl::PointXYZ>::Ptr cloud_filtered (new pcl::PointCloud<pcl::PointXYZ>);
+    pcl::PointCloud<pcl::PointXYZ>::Ptr cloud_filtered2 (new pcl::PointCloud<pcl::PointXYZ>);
+    pcl::PassThrough<pcl::PointXYZ> pass;
+    pass.setInputCloud (cloud);
+    pass.setFilterFieldName ("y");
+    pass.setFilterLimits (-1, 1);
+    //pass.setFilterLimitsNegative (true);
+    pass.filter (*cloud_filtered);
+
+    pcl::VoxelGrid<pcl::PointXYZ> sor;
+    sor.setInputCloud (cloud_filtered);
+    sor.setLeafSize (3.0f, 2.0f, 0.1f);
+    sor.getMinBoxCoordinates();
+    sor.filter (*cloud_filtered2);
+    int size = cloud_filtered2->size();
+    for( int i = 0; i < size;i++)
+    {
+        std::cout<< cloud_filtered2->points[i] << std::endl;
+    }
+
+
+
+
 }
 
 

@@ -59,7 +59,7 @@ void greedy_triangulation(pcl::PointCloud<pcl::PointNormal>::Ptr cloud_with_norm
     viewer->initCameraParameters ();
     while (!viewer->wasStopped ()){
         viewer->spinOnce (100);
-        boost::this_thread::sleep (boost::posix_time::microseconds (100000));
+        //boost::this_thread::sleep (boost::posix_time::microseconds (100000));
     }
 
 
@@ -113,7 +113,7 @@ void marchingcubes (pcl::PointCloud<pcl::PointNormal>::Ptr cloud_with_normals)
     viewer->initCameraParameters ();
     while (!viewer->wasStopped ()){
         viewer->spinOnce (100);
-        boost::this_thread::sleep (boost::posix_time::microseconds (100000));
+        //boost::this_thread::sleep (boost::posix_time::microseconds (100000));
     }
 
 }

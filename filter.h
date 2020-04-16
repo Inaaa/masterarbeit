@@ -25,6 +25,11 @@ void voxel_grid (pcl::PointCloud<pcl::PointXYZ>::Ptr cloud,
 void resampling(pcl::PointCloud<pcl::PointXYZ>::Ptr cloud,
                 pcl::PointCloud<pcl::PointNormal>::Ptr mls_points);
 
+void passthrough(pcl::PointCloud<pcl::PointXYZ>::Ptr cloud,
+        pcl::PointCloud<pcl::PointXYZ>::Ptr cloud_filtered);
+
+void slope(pcl::PointCloud<pcl::PointXYZ>::Ptr cloud);
+
 void normal_estimation(pcl::PointCloud<pcl::PointXYZ>::Ptr cloud_filtered,
                        pcl::PointCloud<pcl::Normal>::Ptr normals);
 
