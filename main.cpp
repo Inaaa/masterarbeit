@@ -18,7 +18,7 @@ int main ()
     pcl::PointCloud<pcl::PointXYZ>::Ptr cloud_filtered2 (new pcl::PointCloud<pcl::PointXYZ>);
     pcl::PointCloud<pcl::PointXYZ>::Ptr cloud_filtered3 (new pcl::PointCloud<pcl::PointXYZ>);
     // load the cloud data
-    pcl::io::loadPCDFile ("/home/cc/cc_code/masterarbeit/data/0356_3_road_new2.pcd", *cloud);
+    pcl::io::loadPCDFile ("/home/chli/CLionProjects/masterarbeit/data/0356_3_road_new2.pcd", *cloud);
     radius_filter(cloud, cloud_filtered);
     passthrough(cloud_filtered, cloud_filtered2);
 
@@ -31,6 +31,7 @@ int main ()
     pcl::PointCloud<pcl::PointNormal>::Ptr cloud_with_normals (new pcl::PointCloud<pcl::PointNormal>);
     normal_estimation(cloud_filtered, normals, cloud_with_normals );
     */
+    visualization(cloud_filtered);
     voxel_grid(cloud_filtered2,cloud_filtered3);
 
     visualization(cloud_filtered3);
@@ -40,15 +41,15 @@ int main ()
 
     // resamling filter
     pcl::PointCloud<pcl::PointNormal>::Ptr mls_points (new pcl::PointCloud<pcl::PointNormal>);
-    resampling(cloud_filtered2, mls_points);
+    resampling(cloud_filtered3, mls_points);
     //pcl::io::savePCDFile ("bun0-mls.pcd", mls_points);
     pcl::PCDWriter writer;
-    writer.write<pcl::PointXYZ>("/home/cc/cc_code/masterarbeit/data/0356_3_road_filter_new.pcd", *cloud_filtered, false);
-
+    writer.write<pcl::PointXYZ>("/home/chli/CLionProjects/masterarbeit/data/0356_3_road_befor_voxfilter.pcd", *cloud_filtered, false);
+    writer.write<pcl::PointXYZ>("/home/chli/CLionProjects/masterarbeit/data/0356_3_road_after_voxfilter.pcd", *cloud_filtered, false);
     // greedy triangularation
     pcl::PolygonMesh::Ptr triangles(new pcl::PolygonMesh);
     greedy_triangulation(mls_points,triangles);
-    pcl::io::saveVTKFile ("/home/cc/cc_code/masterarbeit/data/0356_3_road.vtk", *triangles);
+    //pcl::io::saveVTKFile ("/home/cc/cc_code/masterarbeit/data/0356_3_road.vtk", *triangles);
     //range_image2(cloud_filtered);
 
 

@@ -167,7 +167,7 @@ void slope(pcl::PointCloud<pcl::PointXYZ>::Ptr cloud)
     pcl::PassThrough<pcl::PointXYZ> pass;
     pass.setInputCloud (cloud);
     pass.setFilterFieldName ("y");
-    pass.setFilterLimits (-1, 1);
+    pass.setFilterLimits (-0.2, 0.2);
     //pass.setFilterLimitsNegative (true);
     pass.filter (*cloud_filtered);
 
@@ -176,13 +176,29 @@ void slope(pcl::PointCloud<pcl::PointXYZ>::Ptr cloud)
     sor.setLeafSize (3.0f, 2.0f, 0.1f);
     sor.getMinBoxCoordinates();
     sor.filter (*cloud_filtered2);
+
+    std::vector <float> x;
+    std::vector <float> z;
+
     int size = cloud_filtered2->size();
     for( int i = 0; i < size;i++)
     {
         std::cout<< cloud_filtered2->points[i] << std::endl;
+        x.push_back(cloud_filtered2->points[i].x);
+        z.push_back(cloud_filtered2->points[i].z);
     }
 
+    std::vector<float>::iterator biggest = std::max_element(std::begin(z), std::end(z));
+    auto h = std::distance(std::begin(z), biggest);
+    float biggest_x = x.at(h);
+    auto smallest = std::min_element(std::begin(z), std::end(z));
+    float smallest_x = x.at(std::distance(std::begin(z), smallest));
 
+    std::cout << *biggest<< " and big_x " << biggest_x << std::endl;
+    std::cout << *smallest<< " and small_x " << smallest_x << std::endl;
+
+    float slope = (*biggest-*smallest)/(biggest_x-smallest_x);
+    std::cout << slope << std::endl;
 
 
 }

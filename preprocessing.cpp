@@ -18,7 +18,7 @@ void preprocessing()
     pcl::io::loadPCDFile("/mrtstorage/users/students/chli/real_data/pcd_fl_2/1571220356.360673000.pcd", *cloud);
     pcl::PointCloud<pcl::PointXYZ>::Ptr cloud1(new pcl::PointCloud<pcl::PointXYZ>());
 
-    for (std::size_t i = 0; i < cloud->points.size (); ++i)
+    for (int i = 0; i < cloud->points.size (); ++i)
     {
         if (cloud->points[i].x != 0)
         {
