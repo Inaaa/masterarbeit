@@ -14,6 +14,7 @@
 #include <pcl/surface/mls.h>
 
 #include "filter.h"
+#include "CustomVoxelGrid.cpp"
 #include <pcl/filters/voxel_grid.h>
 #include <pcl/filters/passthrough.h>
 #include <pcl/io/pcd_io.h>
@@ -55,18 +56,18 @@ void voxel_grid (pcl::PointCloud<pcl::PointXYZ>::Ptr cloud,
                  pcl::PointCloud<pcl::PointXYZ>::Ptr cloud_filtered)
 {
 
-    std::cerr << "PointCloud before filtering: " << cloud->width * cloud->height
-              << " data points (" << pcl::getFieldsList (*cloud) << ").";
+    //std::cerr << "PointCloud before filtering: " << cloud->width * cloud->height
+     //         << " data points (" << pcl::getFieldsList (*cloud) << ").";
 
     // Create the filtering object
-    pcl::VoxelGrid<pcl::PointXYZ> sor;
-    sor.setInputCloud (cloud);
-    sor.setLeafSize (0.1f, 0.1f, 0.1f);
-    sor.getMinBoxCoordinates();
-    sor.filter (*cloud_filtered);
+    CustomVoxelGrid<pcl::PointXYZ> customVoxelGrid;
+    customVoxelGrid.setInputCloud (cloud);
+    customVoxelGrid.setLeafSize (0.01f, 0.01f, 0.1f);
+    customVoxelGrid.getMinBoxCoordinates();
+    customVoxelGrid.filter (*cloud_filtered);
 
-    std::cerr << "PointCloud after filtering: " << cloud_filtered->width * cloud_filtered->height
-              << " data points (" << pcl::getFieldsList (*cloud_filtered) << ")."<< std::endl;
+    //std::cerr << "PointCloud after filtering: " << cloud_filtered->width * cloud_filtered->height
+      //        << " data points (" << pcl::getFieldsList (*cloud_filtered) << ")."<< std::endl;
 
     //pcl::PCDWriter writer;
     //writer.write ("table_scene_lms400_downsampled.pcd", *cloud_filtered,
@@ -77,8 +78,8 @@ void voxel_grid (pcl::PointCloud<pcl::PointXYZ>::Ptr cloud,
 void resampling(pcl::PointCloud<pcl::PointXYZ>::Ptr cloud,
         pcl::PointCloud<pcl::PointNormal>::Ptr mls_points)
 {
-    std::cerr << "PointCloud before filtering: " << cloud->width * cloud->height
-              << " data points (" << pcl::getFieldsList (*cloud) << ").";
+    //std::cerr << "PointCloud before filtering: " << cloud->width * cloud->height
+     //         << " data points (" << pcl::getFieldsList (*cloud) << ").";
     // Create a KD-Tree
     pcl::search::KdTree<pcl::PointXYZ>::Ptr tree (new pcl::search::KdTree<pcl::PointXYZ>);
 
@@ -94,8 +95,8 @@ void resampling(pcl::PointCloud<pcl::PointXYZ>::Ptr cloud,
 
     // Reconstruct
     mls.process (*mls_points);
-    std::cerr << "PointCloud after filtering: " << mls_points->width * mls_points->height
-              << " data points (" << pcl::getFieldsList (*mls_points) << ")."<<std::endl;
+    //std::cerr << "PointCloud after filtering: " << mls_points->width * mls_points->height
+      //        << " data points (" << pcl::getFieldsList (*mls_points) << ")."<<std::endl;
 }
 
 
@@ -160,7 +161,7 @@ void normal_estimation(pcl::PointCloud<pcl::PointXYZ>::Ptr cloud_filtered,
     ne.compute (*normals_large_scale);
 }
 
-void slope(pcl::PointCloud<pcl::PointXYZ>::Ptr cloud)
+float slope(pcl::PointCloud<pcl::PointXYZ>::Ptr cloud)
 {
     pcl::PointCloud<pcl::PointXYZ>::Ptr cloud_filtered (new pcl::PointCloud<pcl::PointXYZ>);
     pcl::PointCloud<pcl::PointXYZ>::Ptr cloud_filtered2 (new pcl::PointCloud<pcl::PointXYZ>);
@@ -183,7 +184,7 @@ void slope(pcl::PointCloud<pcl::PointXYZ>::Ptr cloud)
     int size = cloud_filtered2->size();
     for( int i = 0; i < size;i++)
     {
-        std::cout<< cloud_filtered2->points[i] << std::endl;
+        //std::cout<< cloud_filtered2->points[i] << std::endl;
         x.push_back(cloud_filtered2->points[i].x);
         z.push_back(cloud_filtered2->points[i].z);
     }
@@ -194,11 +195,12 @@ void slope(pcl::PointCloud<pcl::PointXYZ>::Ptr cloud)
     auto smallest = std::min_element(std::begin(z), std::end(z));
     float smallest_x = x.at(std::distance(std::begin(z), smallest));
 
-    std::cout << *biggest<< " and big_x " << biggest_x << std::endl;
-    std::cout << *smallest<< " and small_x " << smallest_x << std::endl;
+    //std::cout << *biggest<< " and big_x " << biggest_x << std::endl;
+    //std::cout << *smallest<< " and small_x " << smallest_x << std::endl;
 
-    float slope = (*biggest-*smallest)/(biggest_x-smallest_x);
-    std::cout << slope << std::endl;
+    float slope = -(*biggest-*smallest)/(biggest_x-smallest_x)*100;
+    //std::cout << slope << std::endl;
+    return slope;
 
 
 }

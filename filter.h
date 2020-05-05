@@ -8,7 +8,7 @@
 #include <pcl/filters/radius_outlier_removal.h>
 #include <pcl/filters/conditional_removal.h>
 #include <pcl/filters/statistical_outlier_removal.h>
-//#include <pcl/features/normal_3d.h>
+
 #include <pcl/features/don.h>
 #include <pcl/features/normal_3d_omp.h>
 #include <pcl/filters/voxel_grid.h>
@@ -28,7 +28,7 @@ void resampling(pcl::PointCloud<pcl::PointXYZ>::Ptr cloud,
 void passthrough(pcl::PointCloud<pcl::PointXYZ>::Ptr cloud,
         pcl::PointCloud<pcl::PointXYZ>::Ptr cloud_filtered);
 
-void slope(pcl::PointCloud<pcl::PointXYZ>::Ptr cloud);
+float slope(pcl::PointCloud<pcl::PointXYZ>::Ptr cloud);
 
 void normal_estimation(pcl::PointCloud<pcl::PointXYZ>::Ptr cloud_filtered,
                        pcl::PointCloud<pcl::Normal>::Ptr normals);
