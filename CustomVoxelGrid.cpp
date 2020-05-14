@@ -3,6 +3,8 @@
 //
 
 #include "CustomVoxelGrid.h"
+#include <limits>
+
 
 template<typename PointT>
 void
@@ -191,9 +193,10 @@ CustomVoxelGrid<PointT>::applyFilter(PointCloud &output) {
         if (save_leaf_layout_)
             leaf_layout_[index_vector[first_index].idx] = index;
 
+// BEGIN CHANGE
 
-        Eigen::Vector4f minimum(Eigen::Vector4f::Zero ());
-        for (unsigned int li = first_index; li < last_index; ++li) {
+        Eigen::Vector4f minimum = input_->points[index_vector[first_index].cloud_point_index].getVector4fMap();
+        for (unsigned int li = first_index+1; li < last_index; ++li) {
             if (input_->points[index_vector[li].cloud_point_index].getVector4fMap()[2] < minimum[2]) {
                 minimum = input_->points[index_vector[li].cloud_point_index].getVector4fMap();
             }
@@ -201,6 +204,8 @@ CustomVoxelGrid<PointT>::applyFilter(PointCloud &output) {
         output.points[index].getVector4fMap() = minimum;
 
         ++index;
+
+// END CHANGE
     }
     output.width = static_cast<std::uint32_t> (output.points.size());
 }

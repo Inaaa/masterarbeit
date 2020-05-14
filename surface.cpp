@@ -202,9 +202,9 @@ void bspline_fitting(pcl::PointCloud<pcl::PointXYZ>::Ptr cloud)
     // parameters
 
     unsigned order (2);
-    unsigned refinement (2);
+    unsigned refinement (3);
     //unsigned iterations (10);
-    unsigned mesh_resolution (25);
+    unsigned mesh_resolution (100);
 
     pcl::on_nurbs::FittingSurface::Parameter params;
     params.interior_smoothness = 0.2;
@@ -215,6 +215,7 @@ void bspline_fitting(pcl::PointCloud<pcl::PointXYZ>::Ptr cloud)
     // initialize
     printf ("  surface fitting ...\n");
     ON_NurbsSurface nurbs = pcl::on_nurbs::FittingSurface::initNurbsPCABoundingBox (order, &data);
+    //std::cout << nurbs.m << std::endl;
     pcl::on_nurbs::FittingSurface fit (&data, nurbs);
     //  fit.setQuiet (false); // enable/disable debug output
 
@@ -224,7 +225,8 @@ void bspline_fitting(pcl::PointCloud<pcl::PointXYZ>::Ptr cloud)
     std::vector<pcl::Vertices> mesh_vertices;
     std::string mesh_id = "mesh_nurbs";
     pcl::on_nurbs::Triangulation::convertSurface2PolygonMesh (fit.m_nurbs, mesh, mesh_resolution);
-    viewer.addPolygonMesh (mesh, mesh_id);
+    //viewer.addPolygonMesh (mesh, mesh_id);
+    //viewer.spin ();
 
     // surface refinement
     for (unsigned i = 0; i < refinement; i++)
@@ -233,12 +235,53 @@ void bspline_fitting(pcl::PointCloud<pcl::PointXYZ>::Ptr cloud)
         fit.refine (1);
         fit.assemble (params);
         fit.solve ();
-        pcl::on_nurbs::Triangulation::convertSurface2Vertices (fit.m_nurbs, mesh_cloud, mesh_vertices, mesh_resolution);
-        viewer.updatePolygonMesh<pcl::PointXYZ> (mesh_cloud, mesh_vertices, mesh_id);
+        //pcl::on_nurbs::Triangulation::convertSurface2Vertices (fit.m_nurbs, mesh_cloud, mesh_vertices, mesh_resolution);
+        pcl::on_nurbs::Triangulation::convertSurface2PolygonMesh (fit.m_nurbs, mesh, mesh_resolution);
+        viewer.addPolygonMesh (mesh, mesh_id);
+        //viewer.updatePolygonMesh<pcl::PointXYZ> (mesh_cloud, mesh_vertices, mesh_id);
         viewer.spinOnce ();
+        std::cout << "time" << float( clock () - begin_time ) /  CLOCKS_PER_SEC << std::endl;
     }
 
     std::cout << "time" << float( clock () - begin_time ) /  CLOCKS_PER_SEC << std::endl;
+
+    ON_3dPoint point;
+    ON_3dVector normal;
+    ON_3dVector ds;
+    ON_3dVector dt;
+
+    double max0 = fit.m_nurbs.Domain(0).Max();
+    double max1 = fit.m_nurbs.Domain(1).Max();
+    double min0 = fit.m_nurbs.Domain(0).Min();
+    double min1 = fit.m_nurbs.Domain(1).Min();
+
+    int x = 0;
+    const int RESOLUTION_U = 10;
+    const int RESOLUTION_V = RESOLUTION_U;
+
+    for (int u = 0; u < RESOLUTION_U; u++) {
+        for (int v = 0; v < RESOLUTION_V; v++) {
+            fit.m_nurbs.EvNormal(min0 + (u / (double) RESOLUTION_U) * max0,
+                    min1 + (v / (double) RESOLUTION_V) * max1,
+                    point, ds, dt, normal);
+
+            ON_3dPoint end =  point + normal;
+
+            pcl::PointXYZ p1(point.x, point.y, point.z);
+            pcl::PointXYZ p2(end.x, end.y, end.z);
+
+
+            //viewer.addLine(p1, p2, "line" + std::to_string(x));
+            x++;
+        }
+    }
+    std::cout << "time" << float( clock () - begin_time ) /  CLOCKS_PER_SEC << std::endl;
+
+
+
+
+
+
 
     /*
     // surface fitting with final refinement level

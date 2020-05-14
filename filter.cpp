@@ -28,7 +28,7 @@ void radius_filter(pcl::PointCloud<pcl::PointXYZ>::Ptr cloud,
     // build the filter
     outrem.setInputCloud(cloud);
     outrem.setRadiusSearch(0.5);
-    outrem.setMinNeighborsInRadius (5);
+    outrem.setMinNeighborsInRadius (10);
     // apply filter
     outrem.filter (*cloud_filtered);
 
@@ -62,7 +62,7 @@ void voxel_grid (pcl::PointCloud<pcl::PointXYZ>::Ptr cloud,
     // Create the filtering object
     CustomVoxelGrid<pcl::PointXYZ> customVoxelGrid;
     customVoxelGrid.setInputCloud (cloud);
-    customVoxelGrid.setLeafSize (0.01f, 0.01f, 0.1f);
+    customVoxelGrid.setLeafSize (0.01f, 0.01f, 2.0f);
     customVoxelGrid.getMinBoxCoordinates();
     customVoxelGrid.filter (*cloud_filtered);
 
