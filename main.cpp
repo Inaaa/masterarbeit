@@ -13,6 +13,7 @@
 
 int main ()
 {
+
     std::string args = "b";
     if (args == "a"){
         //ground segmentation
@@ -23,14 +24,12 @@ int main ()
         ground_segmentation(cloud,cloud_filtered);
         visualization(cloud);
         visualization(cloud_filtered);
-
-
     }
     else {
     //ground segmentation
 
 
-    //preprocessing();
+    preprocessing();
     pcl::PointCloud<pcl::PointXYZ>::Ptr cloud (new pcl::PointCloud<pcl::PointXYZ>);
     pcl::PointCloud<pcl::PointXYZ>::Ptr cloud_filtered (new pcl::PointCloud<pcl::PointXYZ>);
     pcl::PointCloud<pcl::PointXYZ>::Ptr cloud_filtered2 (new pcl::PointCloud<pcl::PointXYZ>);
@@ -39,11 +38,13 @@ int main ()
     pcl::io::loadPCDFile ("/home/chli/CLionProjects/masterarbeit/data/0356_3_road_new2.pcd", *cloud);
 
     pcl::PointCloud<pcl::PointXYZ>::Ptr cloud2 (new pcl::PointCloud<pcl::PointXYZ>);
-    pcl::io::loadPCDFile ("/home/chli/CLionProjects/masterarbeit/data/2_noise_halb_slope.pcd", *cloud2);
+    pcl::io::loadPCDFile ("/home/chli/CLionProjects/masterarbeit/data/pseudo_data/slope_10_ele_5.pcd", *cloud2);
     //home/chli/cc_code2/deeplab/kitti_image/testing/pcd/um_000085.pcd
 
-    //visualization(cloud);
-    radius_filter(cloud, cloud_filtered);
+    bspline_fitting(cloud2);
+
+    visualization(cloud2);
+    //radius_filter(cloud, cloud_filtered);
     //visualization(cloud_filtered);
     /*
     pcl::PointXYZ min;//用于存放三个轴的最小值
@@ -92,7 +93,7 @@ int main ()
     float rough_slope = slope(cloud_filtered3);
     std::cout << "roght_slope ="<< rough_slope << std::endl;
 
-    bspline_fitting(cloud2);
+
 
     // resamling filter
     pcl::PointCloud<pcl::PointNormal>::Ptr mls_points (new pcl::PointCloud<pcl::PointNormal>);
