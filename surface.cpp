@@ -6,6 +6,7 @@
 // Created by chli on 09.04.20.
 
 #include "surface.h"
+#include <math.h>
 
 std::vector<float> road_feature (pcl::PointCloud<pcl::PointXYZ>::Ptr cloud)
 {
@@ -225,7 +226,7 @@ void bspline_fitting(pcl::PointCloud<pcl::PointXYZ>::Ptr cloud)
     std::vector<pcl::Vertices> mesh_vertices;
     std::string mesh_id = "mesh_nurbs";
     pcl::on_nurbs::Triangulation::convertSurface2PolygonMesh (fit.m_nurbs, mesh, mesh_resolution);
-    //viewer.addPolygonMesh (mesh, mesh_id);
+    viewer.addPolygonMesh (mesh, mesh_id);
     //viewer.spin ();
 
     // surface refinement
@@ -237,7 +238,8 @@ void bspline_fitting(pcl::PointCloud<pcl::PointXYZ>::Ptr cloud)
         fit.solve ();
         //pcl::on_nurbs::Triangulation::convertSurface2Vertices (fit.m_nurbs, mesh_cloud, mesh_vertices, mesh_resolution);
         pcl::on_nurbs::Triangulation::convertSurface2PolygonMesh (fit.m_nurbs, mesh, mesh_resolution);
-        viewer.addPolygonMesh (mesh, mesh_id);
+        viewer.updatePolygonMesh (mesh, mesh_id);
+
         //viewer.updatePolygonMesh<pcl::PointXYZ> (mesh_cloud, mesh_vertices, mesh_id);
         viewer.spinOnce ();
         std::cout << "time" << float( clock () - begin_time ) /  CLOCKS_PER_SEC << std::endl;
@@ -258,6 +260,7 @@ void bspline_fitting(pcl::PointCloud<pcl::PointXYZ>::Ptr cloud)
     int x = 0;
     const int RESOLUTION_U = 10;
     const int RESOLUTION_V = RESOLUTION_U;
+    double PI = 3.141592653589793;
 
     for (int u = 0; u < RESOLUTION_U; u++) {
         for (int v = 0; v < RESOLUTION_V; v++) {
@@ -269,11 +272,22 @@ void bspline_fitting(pcl::PointCloud<pcl::PointXYZ>::Ptr cloud)
 
             pcl::PointXYZ p1(point.x, point.y, point.z);
             pcl::PointXYZ p2(end.x, end.y, end.z);
+            if ((u== 1 and v == 1)or (u == 9 and v ==9) or (u == 1 and v ==9)or(u == 9 and v ==1)){
+                float tan_x = atan((end.x-point.x)/(end.z-point.z))/PI*180;
+                float tan_y = atan((end.y-point.y)/(end.z-point.z))/PI*180;
+                //viewer.addLine(p1, p2, "line" + std::to_string(x));
+                std::cout<< "u=" << u << "v="<< v << "tan_x" << tan_x << "tan_y" << tan_y<<std::endl;
+
+            }
 
 
-            //viewer.addLine(p1, p2, "line" + std::to_string(x));
+
+
             x++;
         }
+
+
+
     }
     std::cout << "time" << float( clock () - begin_time ) /  CLOCKS_PER_SEC << std::endl;
 
