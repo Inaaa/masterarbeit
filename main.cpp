@@ -37,8 +37,9 @@ int main ()
 
 
     pcl::PointCloud<pcl::PointXYZRGB>::Ptr cloud2 (new pcl::PointCloud<pcl::PointXYZRGB>);
-    pcl::io::loadPCDFile ("/home/chli/cc_code2/c++/surface/samples1.pcd", *cloud2);
+    pcl::io::loadPCDFile ("/home/chli/CLionProjects/masterarbeit/data/temp/1.pcd", *cloud2);
     //home/chli/cc_code2/deeplab/kitti_image/testing/pcd/um_000085.pcd
+    ///home/chli/cc_code2/c++/surface/samples1.pcd
 
 
 
